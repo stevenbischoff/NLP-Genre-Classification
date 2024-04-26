@@ -99,6 +99,7 @@ if __name__ == '__main__':
     torch.save(vocab, 'saved_models/vocab{}.pt'.format(len(genres)))
     
     df.to_pickle('data/imdb_train_processed_{}_genres.pkl'.format(len(genres)))
+    df[['genre', 'title']].to_pickle('data/imdb_train_processed_{}_genres_app.pkl'.format(len(genres)))
     torch.save(X_train, 'data/X_train{}.pt'.format(len(genres)))
     torch.save(y_train, 'data/y_train{}.pt'.format(len(genres)))
     

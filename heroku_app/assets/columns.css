@@ -1,0 +1,22 @@
+.left-column {
+	width: 28%;
+	display: inline-block;
+	margin-right: 1px;
+        height: 100%;
+	overflow: auto;
+        border-right: 1px solid #ccc;
+	vertical-align: top;
+}
+
+.middle-column {
+	width: 45%;
+	display: inline-block;
+	margin-right: 1px;
+	vertical-align: top;
+}
+
+.right-column {
+	width: 26%;
+	display: inline-block;
+	vertical-align: top;
+}

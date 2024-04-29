@@ -32,10 +32,8 @@ pickle_in = blob.download_as_string()
 table_df = pickle.loads(pickle_in)
 # initialize parameters
 INSTANCE_CONNECTION_NAME = f'bright-aileron-421120:us-south1:nlp-analysis'
-#DB_USER = os.getenv('DB_USER') # change for local deployment
-#DB_PASS = os.getenv('DB_PASS') # change for local deployment
-DB_USER='chef'
-DB_PASS='food'
+DB_USER = os.getenv('DB_USER') # change for local deployment
+DB_PASS = os.getenv('DB_PASS') # change for local deployment
 DB_NAME = 'imdb_app'
 
 connector = Connector()

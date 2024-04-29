@@ -93,11 +93,10 @@ if __name__ == '__main__':
         min_freq=min_freq,
         specials=["<unk>"])
     vocab.set_default_index(vocab["<unk>"])
-
-    X_train, y_train = tokens_from_df(df, vocab)
-
     torch.save(vocab, 'saved_models/vocab{}.pt'.format(len(genres)))
     
+    X_train, y_train = tokens_from_df(df, vocab)
+   
     df.to_pickle('data/imdb_train_processed_{}_genres.pkl'.format(len(genres)))
     df[['genre', 'title']].to_pickle('data/imdb_train_processed_{}_genres_app.pkl'.format(len(genres)))
     torch.save(X_train, 'data/X_train{}.pt'.format(len(genres)))
@@ -111,6 +110,7 @@ if __name__ == '__main__':
 
     X_test, y_test = tokens_from_df(df_test, vocab)
     
-    df_test.to_pickle('data/imdb_test_processed_{}_genres.pkl'.format(len(genres)))    
+    df_test.to_pickle('data/imdb_test_processed_{}_genres.pkl'.format(len(genres)))
+    df_test[['genre', 'title']].to_pickle('data/imdb_test_processed_{}_genres_app.pkl'.format(len(genres)))
     torch.save(X_test, 'data/X_test{}.pt'.format(len(genres)))
     torch.save(y_test, 'data/y_test{}.pt'.format(len(genres)))

@@ -1,22 +1,26 @@
 .left-column {
 	width: 28%;
-	display: inline-block;
+	padding: 0px;
 	margin-right: 1px;
-        height: 100%;
+	display: inline-block;
+        height: 100vh;
 	overflow: auto;
         border-right: 1px solid #ccc;
 	vertical-align: top;
+	overflow:hidden;
 }
 
 .middle-column {
 	width: 45%;
-	display: inline-block;
+	padding: 0px;
 	margin-right: 1px;
+	display: inline-block;
 	vertical-align: top;
 }
 
 .right-column {
 	width: 26%;
+	padding: 0px;
 	display: inline-block;
 	vertical-align: top;
 }

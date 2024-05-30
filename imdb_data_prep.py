@@ -90,7 +90,7 @@ df = df_from_lines(train_lines)
 vocab = build_vocab_from_iterator(
     yield_tokens(df['lemmatized_description_list_trunc']),
     min_freq=MIN_FREQ,
-    specials=['<unk>','<pad>']
+    specials=['<cls>','<unk>','<pad>']
     )
 vocab.set_default_index(vocab['<unk>'])
 torch.save(vocab, 'saved_models/vocab_{}_{}_{}.pt'.format(len(GENRES), MIN_FREQ, MAX_LENGTH))

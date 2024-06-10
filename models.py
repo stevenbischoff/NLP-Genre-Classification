@@ -5,14 +5,33 @@ import torch.nn as nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence 
 torch.manual_seed(0)
 
-class LSTM(nn.Module):
-    def __init__(self, vocab, embedding_size, hidden_size, output_size, batch_size=1):
+class pack_pad_lstm_wrapper(nn.Module): # !!!
+    def __init__(self, vocab, embedding_size, hidden_size, batch_size=1):
         super().__init__()
 
         self.padding_value = vocab['<pad>']
 
-        self.embedding = nn.Embedding(len(vocab), embedding_size)
         self.lstm = nn.LSTM(embedding_size, hidden_size, batch_first=True)
+
+    def forward(self, embeds, lengths):
+        # pack padded embeddings using lengths list for lstm layer
+        packed_embeds = pack_padded_sequence(embeds, lengths, batch_first=True, enforce_sorted=False)
+        packed_hidden, _ = self.lstm(packed_embeds)
+        # pad packed hidden layers using vocab padding value
+        hidden, _ = pad_packed_sequence(packed_hidden, batch_first=True, padding_value=self.padding_value)
+
+        return hidden
+    
+
+class LSTM(nn.Module):
+    def __init__(self, vocab, embedding_size, hidden_size, output_size, batch_size=1):
+        super().__init__()
+
+        #self.padding_value = vocab['<pad>'] ##!!!
+
+        self.embedding = nn.Embedding(len(vocab), embedding_size)
+        #self.lstm = nn.LSTM(embedding_size, hidden_size, batch_first=True)
+        self.pack_pad_lstm = pack_pad_lstm_wrapper(vocab, embedding_size, hidden_size)
         self.dropout = nn.Dropout(0.2)
         self.h_2_o = nn.Linear(hidden_size, output_size)
         
@@ -22,11 +41,9 @@ class LSTM(nn.Module):
 
     def forward(self, idx, lengths):
         embeds = self.embedding(idx)
-        # pack padded embeddings using lengths list for lstm layer
-        packed_embeds = pack_padded_sequence(embeds, lengths, batch_first=True, enforce_sorted=False)
-        packed_hidden, _ = self.lstm(packed_embeds)
-        # pad packed hidden layers using vocab padding value
-        hidden, _ = pad_packed_sequence(packed_hidden, batch_first=True, padding_value=self.padding_value)
+
+        hidden = self.pack_pad_lstm(embeds, lengths)
+         
         hidden = self.dropout(hidden)
         # keep only the last unpadded hidden state using lengths
         hidden = torch.stack([h[length-1] for h, length in zip(hidden, lengths)])
@@ -34,57 +51,6 @@ class LSTM(nn.Module):
         output = self.log_softmax(output)
         
         return output
-    
-    def get_batch_hiddens_and_outputs(self, input_tensor, lengths, mode='numpy'):
-        """
-        Get unpadded hidden states and outputs for a batch of inputs.
-        Returns lists of tensors because unpadded hiddens and outputs vary in length.
-        Params:
-            input_tensor: tensor of shape (batch_size, max_length)
-            lengths: list of integers
-            mode: 'numpy' or 'torch'
-        Returns:
-            hidden: list of tensors of varying shapes (time_steps, hidden_size)
-            output: list of tensors of varying shapes (time_steps, hidden_size)
-        """
-        embeds = self.embedding(input_tensor)
-        packed_embeds = pack_padded_sequence(embeds, lengths, batch_first=True, enforce_sorted=False)
-        packed_hidden, _ = self.lstm(packed_embeds)
-        hidden, _ = pad_packed_sequence(packed_hidden, batch_first=True, padding_value=self.padding_value)
-        output = self.h_2_o(hidden)
-        # apply softmax to get probabilities
-        output = self.softmax(output)
-
-        if mode == 'numpy':
-            hidden = [h[:length].detach().numpy() for h, length in zip(hidden, lengths)]
-            output = [o[:length].detach().numpy() for o, length in zip(output, lengths)]
-        elif mode == 'torch':
-            hidden = [h[:length] for h, length in zip(hidden, lengths)]
-            output = [o[:length] for o, length in zip(output, lengths)]
-
-        return hidden, output
-    
-    def get_all_hiddens_and_outputs(self, dataloader, mode='numpy'):
-        """
-        Get all hidden states and outputs for a dataloader.
-        Params:
-            dataloader: DataLoader object for IMDBDataset
-            mode: 'numpy' or 'torch'
-        Returns:
-            all_hiddens: list of tensors of varying shapes (time_steps, hidden_size)
-            all_outputs: list of tensors of varying shapes (time_steps, output_size)
-        """
-        # initialize variables
-        all_hiddens, all_outputs = [], []
-        # set evaluation mode
-        self.eval()
-        with torch.no_grad():
-            for i, (input_tensor, lengths, category_tensor) in enumerate(dataloader):
-                batch_hiddens, batch_outputs = self.get_batch_hiddens_and_outputs(input_tensor, lengths, mode=mode)
-                all_hiddens += batch_hiddens
-                all_outputs += batch_outputs
-                
-        return all_hiddens, all_outputs
 
     @torch.no_grad()
     def evaluate_batch(self, idx, lengths, y, loss_criterion): # assumes self.eval()

@@ -5,7 +5,7 @@ import torch.nn as nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence 
 torch.manual_seed(0)
 
-class pack_pad_lstm_wrapper(nn.Module): # !!!
+class pack_pad_lstm_wrapper(nn.Module):
     def __init__(self, vocab, embedding_size, hidden_size, batch_size=1):
         super().__init__()
 
@@ -27,10 +27,7 @@ class LSTM(nn.Module):
     def __init__(self, vocab, embedding_size, hidden_size, output_size, batch_size=1):
         super().__init__()
 
-        #self.padding_value = vocab['<pad>'] ##!!!
-
         self.embedding = nn.Embedding(len(vocab), embedding_size)
-        #self.lstm = nn.LSTM(embedding_size, hidden_size, batch_first=True)
         self.pack_pad_lstm = pack_pad_lstm_wrapper(vocab, embedding_size, hidden_size)
         self.dropout = nn.Dropout(0.2)
         self.h_2_o = nn.Linear(hidden_size, output_size)

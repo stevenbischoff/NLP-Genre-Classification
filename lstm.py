@@ -1,3 +1,9 @@
+"""
+This module contains a custom PyTorch LSTM class and a wrapper for the PyTorch
+LSTM layer that deals with packing and unpacking padded inputs.
+
+Author: Steve Bischoff
+"""
 import numpy as np
 
 import torch
@@ -10,7 +16,7 @@ class pack_pad_lstm_wrapper(nn.Module):
         super().__init__()
 
         self.padding_value = vocab['<pad>']
-
+        
         self.lstm = nn.LSTM(embedding_size, hidden_size, batch_first=True)
 
     def forward(self, embeds, lengths):

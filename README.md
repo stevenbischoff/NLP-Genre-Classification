@@ -12,8 +12,8 @@ In this package, I create LSTM and Transformer models in PyTorch to predict a mo
 
 ## Files
 
- * **IMDB_genres_description_words.ipynb**: this Jupyter notebook contains a detailed walkthrough of my process, as well as an explanation of each visualization in the dashboard.
- * **imdb_data_prep.py**:
- * **imdb_dataset.py**:
- * **models.py**:
+ * **IMDB_genre_classification.ipynb**: this Jupyter notebook contains a detailed walkthrough of my process, as well as an explanation of each visualization in the dashboard.
+ * **imdb_data_prep.py**: this script takes the raw description files from Kaggle and preprocesses them to be read into PyTorch models.
+ * **imdb_dataset.py**: this file contains a PyTorch Dataset subclass to create custom dataset objects.
+ * **models.py**: this file contains the model classes (subclasses of torch.nn.Module)
  * **heroku_app**: Python code and CSS assets for the app can be found in the heroku_app folder in this repository. The app connects to cloud data using Google Cloud clients and performs database queries using SQLAlchemy.

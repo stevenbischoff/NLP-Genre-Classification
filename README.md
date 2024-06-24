@@ -13,5 +13,7 @@ In this package, I create LSTM and Transformer models in PyTorch to predict a mo
 ## Files
 
  * **IMDB_genres_description_words.ipynb**: this Jupyter notebook contains a detailed walkthrough of my process, as well as an explanation of each visualization in the dashboard.
-
-Python code and CSS assets for the app can be found in the heroku_app folder in this repository. The app connects to cloud data using Google Cloud clients and performs database queries using SQLAlchemy.
+ * **imdb_data_prep.py**:
+ * **imdb_dataset.py**:
+ * **models.py**:
+ * **heroku_app**: Python code and CSS assets for the app can be found in the heroku_app folder in this repository. The app connects to cloud data using Google Cloud clients and performs database queries using SQLAlchemy.
